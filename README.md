@@ -42,3 +42,16 @@ python -m pytest -q
 
 - 本项目用于学习与求职作品集。
 - 不提交密钥、虚拟环境和个人数据
+
+## 使用
+
+```powershell
+# 新增卡片
+python -m src.cli add "RAG 是什么" "检索增强生成" --tag AI
+
+# 查看全部
+python -m src.cli list
+
+# 搜索
+python -m src.cli search rag
+```
