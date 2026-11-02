@@ -55,3 +55,27 @@ python -m src.cli list
 # 搜索
 python -m src.cli search rag
 ```
+
+## API
+
+```powershell
+python -m uvicorn src.api:app --reload --port 8000
+```
+
+启动后打开：
+
+- Swagger 文档：http://127.0.0.1:8000/docs
+- 健康检查：`GET /health`
+- 卡片列表：`GET /cards`
+- 搜索：`GET /cards/search?q=rag`
+- 新增：`POST /cards`
+
+`POST /cards` 请求体：
+
+```json
+{
+  "title": "卡片标题",
+  "content": "卡片内容",
+  "tags": ["AI"]
+}
+```
