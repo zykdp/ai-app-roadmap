@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-from .cards import add_card, list_cards, search_cards
+from .cards import add_card, delete_card, get_card, list_cards, search_cards
 
 app = FastAPI(title="AI 学习卡片 API", version="0.1.0")
 
@@ -38,3 +38,17 @@ def create_card(payload: CardIn) -> dict:
         return add_card(payload.title, payload.content, payload.tags)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/cards/{card_id}", response_model=CardOut)
+def read_card(card_id: str) -> dict:
+    card = get_card(card_id)
+    if card is None:
+        raise HTTPException(status_code=404, detail="卡片不存在")
+    return card
+
+
+@app.delete("/cards/{card_id}", status_code=204)
+def remove_card(card_id: str) -> None:
+    if not delete_card(card_id):
+        raise HTTPException(status_code=404, detail="卡片不存在")

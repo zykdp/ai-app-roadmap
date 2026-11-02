@@ -4,6 +4,8 @@ import pytest
 
 from src.cards import (
     add_card,
+    delete_card,
+    get_card,
     list_cards,
     load_cards,
     save_cards,
@@ -39,6 +41,8 @@ def test_load_non_list_raises(tmp_path):
 
     with pytest.raises(ValueError):
         load_cards(path)
+
+        
 def test_add_card_persists(tmp_path):
     path = tmp_path / "cards.json"
 
@@ -79,3 +83,20 @@ def test_search_cards_ignores_case(tmp_path):
     assert len(search_cards("rag", path)) == 1
     assert len(search_cards("fastapi", path)) == 1
     assert search_cards("", path) == []
+
+
+def test_get_card(tmp_path):
+    path = tmp_path / "cards.json"
+    card = add_card("标题", "内容", path=path)
+
+    assert get_card(card["id"], path)["title"] == "标题"
+    assert get_card("missing", path) is None
+
+
+def test_delete_card(tmp_path):
+    path = tmp_path / "cards.json"
+    card = add_card("标题", "内容", path=path)
+
+    assert delete_card(card["id"], path) is True
+    assert load_cards(path) == []
+    assert delete_card(card["id"], path) is False

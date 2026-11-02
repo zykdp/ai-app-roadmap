@@ -79,3 +79,5 @@ python -m uvicorn src.api:app --reload --port 8000
   "tags": ["AI"]
 }
 ```
+- 单张查询：`GET /cards/{id}`
+- 删除：`DELETE /cards/{id}`

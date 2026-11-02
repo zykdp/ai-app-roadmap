@@ -73,3 +73,43 @@ def test_create_card_rejects_blank(monkeypatch):
 def test_create_card_validation_error():
     response = client.post("/cards", json={"title": "x", "content": ""})
     assert response.status_code == 422
+
+
+def test_get_card(monkeypatch):
+    monkeypatch.setattr(
+        "src.api.get_card",
+        lambda card_id: {
+            "id": card_id,
+            "title": "测试",
+            "content": "内容",
+            "tags": [],
+            "created_at": "2026-01-01T00:00:00+00:00",
+        },
+    )
+
+    response = client.get("/cards/1")
+    assert response.status_code == 200
+    assert response.json()["id"] == "1"
+
+
+def test_get_card_not_found(monkeypatch):
+    monkeypatch.setattr("src.api.get_card", lambda card_id: None)
+
+    response = client.get("/cards/missing")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "卡片不存在"
+
+
+def test_delete_card(monkeypatch):
+    monkeypatch.setattr("src.api.delete_card", lambda card_id: True)
+
+    response = client.delete("/cards/1")
+    assert response.status_code == 204
+    assert response.content == b""
+
+
+def test_delete_card_not_found(monkeypatch):
+    monkeypatch.setattr("src.api.delete_card", lambda card_id: False)
+
+    response = client.delete("/cards/missing")
+    assert response.status_code == 404

@@ -83,3 +83,22 @@ def search_cards(keyword: str, path: Path = DATA_FILE) -> list[dict]:
         if keyword in title or keyword in content:
             result.append(card)
     return result
+
+def get_card(card_id: str, path: Path = DATA_FILE) -> dict | None:
+    """按 id 查一张卡片，不存在返回 None。"""
+    for card in load_cards(path):
+        if card.get("id") == card_id:
+            return card
+    return None
+
+
+def delete_card(card_id: str, path: Path = DATA_FILE) -> bool:
+    """按 id 删除，删掉了返回 True，未找到返回 False。"""
+    cards = load_cards(path)
+    remaining = [card for card in cards if card.get("id") != card_id]
+
+    if len(remaining) == len(cards):
+        return False
+
+    save_cards(remaining, path)
+    return True
